@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PublishUrlHistory>ftp://ftp.davidmortiboy.com/|C:\Users\Dave\Desktop\YoutubePlaylistDownloader\|ftp://ftp.davidmortiboy.com/public_html/shr/YoutubePlaylistDownloader/|ftp://ftp.davidmortiboy.com/shr/YoutubePlaylistDownloader/|C:\Users\Dave\Desktop\Youtube Playlist Downloader\</PublishUrlHistory>
+    <InstallUrlHistory>http://www.davidmortiboy.com/shr/ytp/|http://www.davidmortiboy.com/public_html/shr/YoutubePlaylistDownloader/|http://www.davidmortiboy.com/shr/YoutubePlaylistDownloader/</InstallUrlHistory>
+    <SupportUrlHistory>http://www.davidmortiboy.com</SupportUrlHistory>
+    <UpdateUrlHistory />
+    <BootstrapperUrlHistory />
+    <ErrorReportUrlHistory>http://www.davidmortiboy.com</ErrorReportUrlHistory>
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>true</VerifyUploadedFiles>
+  </PropertyGroup>
+</Project>
