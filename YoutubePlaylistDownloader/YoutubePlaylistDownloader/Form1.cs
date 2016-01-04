@@ -110,6 +110,7 @@ namespace YoutubePlaylistDownloader
             }
 
             lstVideos.Items.Clear();
+
             string getID = pd.GetPlaylistIDFromURL(txtPlaylistInput.Text);
 
             List<Downloadable> videos = pd.GetVideosByPlaylist(getID);
@@ -287,6 +288,7 @@ namespace YoutubePlaylistDownloader
         void DisableControls()
         {
             isdisabled = true;
+            btnSettings.Enabled = false;
             btnDownload.Enabled = false;
             btnGet.Enabled = false;
             btnBrowse.Enabled = false;
@@ -298,6 +300,7 @@ namespace YoutubePlaylistDownloader
         void EnableControls()
         {
             isdisabled = false;
+            btnSettings.Enabled = true;
             btnDownload.Enabled = true;
             btnGet.Enabled = true;
             btnBrowse.Enabled = true;
