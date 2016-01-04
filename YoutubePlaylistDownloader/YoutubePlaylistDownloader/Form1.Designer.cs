@@ -37,15 +37,13 @@
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.nudThreads = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
             this.chkIncrement = new System.Windows.Forms.CheckBox();
             this.lblSelected = new System.Windows.Forms.Label();
             this.lblPath = new System.Windows.Forms.Label();
             this.lblMsg = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).BeginInit();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnDownload
@@ -115,44 +113,12 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // nudThreads
-            // 
-            this.nudThreads.Location = new System.Drawing.Point(395, 35);
-            this.nudThreads.Maximum = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.nudThreads.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudThreads.Name = "nudThreads";
-            this.nudThreads.Size = new System.Drawing.Size(43, 20);
-            this.nudThreads.TabIndex = 7;
-            this.nudThreads.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.nudThreads.ValueChanged += new System.EventHandler(this.nudThreads_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(198, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(191, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Choose number of threads (advanced):";
-            // 
             // chkIncrement
             // 
             this.chkIncrement.AutoSize = true;
             this.chkIncrement.Checked = true;
             this.chkIncrement.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIncrement.Location = new System.Drawing.Point(456, 36);
+            this.chkIncrement.Location = new System.Drawing.Point(390, 39);
             this.chkIncrement.Name = "chkIncrement";
             this.chkIncrement.Size = new System.Drawing.Size(137, 17);
             this.chkIncrement.TabIndex = 9;
@@ -207,20 +173,29 @@
             this.linkLabel1.Text = "www.davidmortiboy.com";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(533, 35);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(121, 23);
+            this.btnSettings.TabIndex = 15;
+            this.btnSettings.Text = "Advanced Options";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnGet;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(717, 481);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblMsg);
             this.Controls.Add(this.lblPath);
             this.Controls.Add(this.lblSelected);
             this.Controls.Add(this.chkIncrement);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.nudThreads);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.btnGet);
@@ -232,7 +207,6 @@
             this.Name = "Form1";
             this.Text = "Youtube Playlist Downloader v1.0";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -248,14 +222,13 @@
         private System.Windows.Forms.CheckBox chkSelectAll;
         private System.Windows.Forms.FolderBrowserDialog folderBrowser;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.NumericUpDown nudThreads;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox chkIncrement;
         private System.Windows.Forms.Label lblSelected;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.Label lblMsg;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Button btnSettings;
     }
 }
 

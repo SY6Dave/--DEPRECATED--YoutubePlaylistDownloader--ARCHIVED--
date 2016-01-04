@@ -100,3 +100,4 @@ C:\Users\Dave\Documents\GitHub\YoutubePlaylistDownloader\YoutubePlaylistDownload
 C:\Users\Dave\Documents\GitHub\YoutubePlaylistDownloader\YoutubePlaylistDownloader\YoutubePlaylistDownloader\obj\Debug\YoutubePlaylistDownloader.csproj.GenerateResource.Cache
 C:\Users\Dave\Documents\GitHub\YoutubePlaylistDownloader\YoutubePlaylistDownloader\YoutubePlaylistDownloader\obj\Debug\YoutubePlaylistDownloader.exe.manifest
 C:\Users\Dave\Documents\GitHub\YoutubePlaylistDownloader\YoutubePlaylistDownloader\YoutubePlaylistDownloader\obj\Debug\YoutubePlaylistDownloader.application
+C:\Users\Dave\Documents\GitHub\YoutubePlaylistDownloader\YoutubePlaylistDownloader\YoutubePlaylistDownloader\obj\Debug\YoutubePlaylistDownloader.frmSettings.resources

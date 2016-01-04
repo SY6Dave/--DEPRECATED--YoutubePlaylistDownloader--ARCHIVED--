@@ -13,7 +13,7 @@ namespace YoutubePlaylistDownloader
 {
     public partial class Form1 : Form
     {
-        PlaylistDownloader pd;
+        public static PlaylistDownloader pd;
         object consolelock = new object();
         object disablelock = new object();
         bool isdisabled = false;
@@ -99,6 +99,7 @@ namespace YoutubePlaylistDownloader
         {
             Console.Clear();
             pd.consoleLog.Clear();
+            chkSelectAll.Checked = false;
 
             lock (consolelock)
             {
@@ -257,11 +258,7 @@ namespace YoutubePlaylistDownloader
             }
         }
 
-        private void nudThreads_ValueChanged(object sender, EventArgs e)
-        {
-            if (isdisabled) return;
-            pd.maxThreads = (int)nudThreads.Value;
-        }
+        
 
         delegate void downloadIsComplete();
 
@@ -294,7 +291,6 @@ namespace YoutubePlaylistDownloader
             btnGet.Enabled = false;
             btnBrowse.Enabled = false;
             txtPlaylistInput.Enabled = false;
-            nudThreads.Enabled = false;
             chkIncrement.Enabled = false;
             chkSelectAll.Enabled = false;
             lstVideos.Enabled = false;
@@ -306,7 +302,6 @@ namespace YoutubePlaylistDownloader
             btnGet.Enabled = true;
             btnBrowse.Enabled = true;
             txtPlaylistInput.Enabled = true;
-            nudThreads.Enabled = true;
             chkIncrement.Enabled = true;
             chkSelectAll.Enabled = true;
             lstVideos.Enabled = true;
@@ -334,6 +329,12 @@ namespace YoutubePlaylistDownloader
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("http://www.davidmortiboy.com");
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            frmSettings Settings = new frmSettings();
+            Settings.ShowDialog();
         }
     }
 }

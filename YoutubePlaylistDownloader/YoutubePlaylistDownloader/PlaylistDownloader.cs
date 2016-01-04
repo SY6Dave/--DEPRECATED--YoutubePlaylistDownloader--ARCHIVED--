@@ -151,6 +151,8 @@ namespace YoutubePlaylistDownloader
         public string savePath = "";
         public bool incremental = true;
         public int maxThreads = 4;
+        public int maxVids = 50;
+        int vidCount = 0;
         public List<string> consoleLog = new List<string>();
         int threadFinishedCount = 0;
         string emptyPath = "https://www.youtube.com/watch?v=";
@@ -229,6 +231,7 @@ namespace YoutubePlaylistDownloader
             });
 
             var nextPageToken = "";
+            vidCount = 0;
             while (nextPageToken != null)
             {
                 var playlistRequest = youtubeService.PlaylistItems.List("snippet,contentDetails");
@@ -251,8 +254,12 @@ namespace YoutubePlaylistDownloader
                         Downloadable newVideo = new Downloadable(emptyPath + playlistItem.ContentDetails.VideoId, playlistItem.Snippet.Title, indexcount, playlistItem.ContentDetails.VideoId);
                         videos.Add(newVideo);
                         indexcount++;
+                        vidCount++;
+
+                        if (vidCount >= maxVids) break;
                     }
 
+                    if (vidCount >= maxVids) break;
                     nextPageToken = playlistResponse.NextPageToken;
                 }
                 catch
@@ -288,32 +295,43 @@ namespace YoutubePlaylistDownloader
                 ApplicationName = "VideoGrabber"
             });
 
-            var searchRequest = youtubeService.Search.List("snippet");
-            searchRequest.Q = searchQuery;
-            searchRequest.MaxResults = 50;
+            var nextPageToken = "";
+            vidCount = 0;
+            while (nextPageToken != null)
+            {
+                var searchRequest = youtubeService.Search.List("snippet");
+                searchRequest.Q = searchQuery;
+                searchRequest.MaxResults = 50;
 
-            try
-            {
-                var searchResponse = searchRequest.Execute();
-                int indexcount = 0;
-                foreach (var searchItem in searchResponse.Items)
+                try
                 {
-                    if (searchItem.Snippet.Description == "This video is unavailable." && searchItem.Snippet.Title == "Deleted video")
+                    var searchResponse = searchRequest.Execute();
+                    int indexcount = 0;
+                    foreach (var searchItem in searchResponse.Items)
                     {
-                        continue;
+                        if (searchItem.Snippet.Description == "This video is unavailable." && searchItem.Snippet.Title == "Deleted video")
+                        {
+                            continue;
+                        }
+                        if (searchItem.Id.VideoId != null)
+                        {
+                            Downloadable newVideo = new Downloadable(emptyPath + searchItem.Id.VideoId, searchItem.Snippet.Title, indexcount, searchItem.Id.VideoId);
+                            videos.Add(newVideo);
+                            indexcount++;
+                            vidCount++;
+
+                            if (vidCount >= maxVids) break;
+                        }
                     }
-                    if (searchItem.Id.VideoId != null)
-                    {
-                        Downloadable newVideo = new Downloadable(emptyPath + searchItem.Id.VideoId, searchItem.Snippet.Title, indexcount, searchItem.Id.VideoId);
-                        videos.Add(newVideo);
-                        indexcount++;
-                    }
+
+                    if (vidCount >= maxVids) break;
+                    nextPageToken = searchResponse.NextPageToken;
                 }
-            }
-            catch
-            {
-                //something went wrong
-                return null;
+                catch
+                {
+                    //something went wrong
+                    return null;
+                }
             }
 
             if (videos.Count < 100)
