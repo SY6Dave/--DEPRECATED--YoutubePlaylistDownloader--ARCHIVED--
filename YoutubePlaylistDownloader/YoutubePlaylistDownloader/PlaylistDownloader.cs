@@ -232,6 +232,7 @@ namespace YoutubePlaylistDownloader
             while (nextPageToken != null)
             {
                 var playlistRequest = youtubeService.PlaylistItems.List("snippet,contentDetails");
+
                 playlistRequest.PlaylistId = playlistID;
                 playlistRequest.MaxResults = 50;
                 playlistRequest.PageToken = nextPageToken;
@@ -242,7 +243,7 @@ namespace YoutubePlaylistDownloader
                     int indexcount = 0;
                     foreach (var playlistItem in playlistResponse.Items)
                     {
-                        if(playlistItem.Snippet.Description == "This video is unavailable." && playlistItem.Snippet.Title == "Deleted video")
+                        if (playlistItem.Snippet.Description == "This video is unavailable." && playlistItem.Snippet.Title == "Deleted video")
                         {
                             continue;
                         }
@@ -331,6 +332,32 @@ namespace YoutubePlaylistDownloader
             return videos;
         }
 
+        public string GetPlaylistIDFromChannel(string channelName)
+        {
+
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = apikey,
+                ApplicationName = "VideoGrabber"
+            });
+
+            var channelRequest = youtubeService.Channels.List("contentDetails");
+            channelRequest.ForUsername = channelName;
+            channelRequest.MaxResults = 1;
+
+            try
+            {
+                var channelResponse = channelRequest.Execute();
+                var channel = channelResponse.Items[0];
+                string uploadsPlaylistID = channel.ContentDetails.RelatedPlaylists.Uploads;
+                return uploadsPlaylistID;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         void DownloadAll(object inVideo)
         {
             videos = inVideo as List<Downloadable>;
@@ -393,7 +420,7 @@ namespace YoutubePlaylistDownloader
                                         }
                                         catch
                                         {
-                                            if(n==9)
+                                            if (n == 9)
                                             {
                                                 lock (consolelock)
                                                 {
@@ -417,7 +444,7 @@ namespace YoutubePlaylistDownloader
                 }
                 catch (Exception e)
                 {
-                    lock(consolelock)
+                    lock (consolelock)
                     {
                         Console.WriteLine(e.ToString());
                         ConsoleWrittenTo(e.ToString());
@@ -487,7 +514,7 @@ namespace YoutubePlaylistDownloader
             {
                 var audioDownloader = new AudioDownloader(video, savePath + @"\" + countPrefix + " " + legalTitle + video.AudioExtension);
                 audioDownloader.DownloadProgressChanged += (sender, _args) => DownloadProgress(_args.ProgressPercentage, InVideo.DisplayName);
-                audioDownloader.AudioExtractionProgressChanged += (sender, _args) => ExtractionProgress(_args.ProgressPercentage, InVideo.DisplayName);  
+                audioDownloader.AudioExtractionProgressChanged += (sender, _args) => ExtractionProgress(_args.ProgressPercentage, InVideo.DisplayName);
                 audioDownloader.Execute();
             }
             else
@@ -498,7 +525,7 @@ namespace YoutubePlaylistDownloader
                 audioDownloader.Execute();
             }
 
-                      
+
 
             lock (consolelock)
             {
@@ -519,9 +546,9 @@ namespace YoutubePlaylistDownloader
 
         void DownloadProgress(double ProgressPercentage, string title)
         {
-            double percentcalc =  Math.Round(ProgressPercentage * 0.85, 2);
+            double percentcalc = Math.Round(ProgressPercentage * 0.85, 2);
             if (percentcalc > 99.9) percentcalc = 100;
-            lock(consolelock)
+            lock (consolelock)
             {
                 bool firstwrite = true;
                 int lineIndex = 0;
@@ -547,19 +574,19 @@ namespace YoutubePlaylistDownloader
                     consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
 
                     Console.SetCursorPosition(0, lineIndex);
-                    Console.Write(new string(' ', Console.WindowWidth-1));
+                    Console.Write(new string(' ', Console.WindowWidth - 1));
                     Console.SetCursorPosition(0, lineIndex);
                     Console.WriteLine(consoleLog[lineIndex]);
                     Console.CursorTop = consoleLog.Count;
                     Console.CursorLeft = 0;
                 }
-            }  
+            }
         }
 
         void ExtractionProgress(double ProgressPercentage, string title)
         {
             double percentcalc = Math.Round(85 + ProgressPercentage * 0.15, 2);
-            if(percentcalc > 99.9) percentcalc = 100;
+            if (percentcalc > 99.9) percentcalc = 100;
             lock (consolelock)
             {
                 bool firstwrite = true;
@@ -586,13 +613,13 @@ namespace YoutubePlaylistDownloader
                     consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
 
                     Console.SetCursorPosition(0, lineIndex);
-                    Console.Write(new string(' ', Console.WindowWidth-1));
+                    Console.Write(new string(' ', Console.WindowWidth - 1));
                     Console.SetCursorPosition(0, lineIndex);
                     Console.WriteLine(consoleLog[lineIndex]);
                     Console.CursorTop = consoleLog.Count;
                     Console.CursorLeft = 0;
                 }
-            }  
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace YoutubePlaylistDownloader
 {
@@ -14,7 +15,8 @@ namespace YoutubePlaylistDownloader
     {
         PlaylistDownloader pd;
         object consolelock = new object();
-        bool isdownloading = false;
+        object disablelock = new object();
+        bool isdisabled = false;
 
         public Form1()
         {
@@ -29,7 +31,7 @@ namespace YoutubePlaylistDownloader
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             if (pd.savePath == "")
             {
                 lock (consolelock)
@@ -68,15 +70,8 @@ namespace YoutubePlaylistDownloader
 
                 pd.StartThreads(downloading);
 
-                btnDownload.Enabled = false;
-                btnGet.Enabled = false;
-                btnBrowse.Enabled = false;
-                txtPlaylistInput.Enabled = false;
-                nudThreads.Enabled = false;
-                chkIncrement.Enabled = false;
-                chkSelectAll.Enabled = false;
-                lstVideos.Enabled = false;
-                isdownloading = true;
+                DisableControls();
+                isdisabled = true;
             }
             else
             {
@@ -96,43 +91,97 @@ namespace YoutubePlaylistDownloader
 
         private void btnGet_Click(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             GetVideos();
         }
 
         void GetVideos()
         {
+            Console.Clear();
+            pd.consoleLog.Clear();
+
+            lock (consolelock)
+            {
+                Console.CursorTop = pd.consoleLog.Count;
+                Console.CursorLeft = 0;
+                Console.WriteLine("Attempting to retrieve videos...");
+                pd.ConsoleWrittenTo("Attempting to retrieve videos...");
+            }
+
             lstVideos.Items.Clear();
             string getID = pd.GetPlaylistIDFromURL(txtPlaylistInput.Text);
-            /*if (getID == null)
-            {
-                lock (consolelock)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("Invalid playlist url");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-
-                txtPlaylistInput.BackColor = Color.Red;
-                return;
-
-
-            }*/
 
             List<Downloadable> videos = pd.GetVideosByPlaylist(getID);
             if (videos == null)
             {
-                /*lock (consolelock)
+                //no such playlist, try channel
+
+                lock (consolelock)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("Invalid playlist url");
+                    Console.CursorTop = pd.consoleLog.Count;
+                    Console.CursorLeft = 0;
+                    Console.WriteLine("No playlist found, looking for channels...");
+                    pd.ConsoleWrittenTo("No playlist found, looking for channels...");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
-                txtPlaylistInput.BackColor = Color.Red;
-                return;*/
+                string channelPlaylist = pd.GetPlaylistIDFromChannel(txtPlaylistInput.Text);
+                if (channelPlaylist != null)
+                {
+                    lock (consolelock)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        Console.CursorTop = pd.consoleLog.Count;
+                        Console.CursorLeft = 0;
+                        Console.WriteLine("Channel found! Retrieving uploads...");
+                        pd.ConsoleWrittenTo("Channel found! Retrieving uploads...");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
 
-                videos = pd.GetVideosByQuery(txtPlaylistInput.Text);
+                    videos = pd.GetVideosByPlaylist(channelPlaylist);
+
+                    if (videos == null || videos.Count == 0)
+                    {
+                        lock (consolelock)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.CursorTop = pd.consoleLog.Count;
+                            Console.CursorLeft = 0;
+                            Console.WriteLine("Channel has no uploads, querying search...");
+                            pd.ConsoleWrittenTo("Channel has no uploads, querying search...");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                    }
+                }
+                else
+                {
+                    //no uploads
+                    lock (consolelock)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.CursorTop = pd.consoleLog.Count;
+                        Console.CursorLeft = 0;
+                        Console.WriteLine("No channel found, querying search...");
+                        pd.ConsoleWrittenTo("No channel found, querying search...");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    videos = pd.GetVideosByQuery(txtPlaylistInput.Text);
+                }
+
+            }
+            else
+            {
+                lock (consolelock)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.CursorTop = pd.consoleLog.Count;
+                    Console.CursorLeft = 0;
+                    Console.WriteLine("Playlist found! Retrieving videos...");
+                    pd.ConsoleWrittenTo("Playlist found! Retrieving videos...");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
             }
 
             if (videos == null || videos.Count == 0)
@@ -142,13 +191,22 @@ namespace YoutubePlaylistDownloader
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.CursorTop = pd.consoleLog.Count;
                     Console.CursorLeft = 0;
-                    Console.WriteLine("No playlist or search results found");
-                    pd.ConsoleWrittenTo("No playlist or search results found");
+                    Console.WriteLine("No videos found!");
+                    pd.ConsoleWrittenTo("No videos found!");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
                 txtPlaylistInput.BackColor = Color.Red;
                 return;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.CursorTop = pd.consoleLog.Count;
+                Console.CursorLeft = 0;
+                Console.WriteLine("Got result! Populating list...");
+                pd.ConsoleWrittenTo("Got result! Populating list...");
+                Console.ForegroundColor = ConsoleColor.White;
             }
 
 
@@ -158,17 +216,19 @@ namespace YoutubePlaylistDownloader
             }
 
             lstVideos.DisplayMember = "Name";
+
+            //EnableControls();
         }
 
         private void txtPlaylistInput_TextChanged(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             txtPlaylistInput.BackColor = Color.Empty;
         }
 
         private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             if (chkSelectAll.Checked)
             {
                 for (int i = 0; i < lstVideos.Items.Count; i = i + 1)
@@ -189,7 +249,7 @@ namespace YoutubePlaylistDownloader
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
                 pd.savePath = folderBrowser.SelectedPath;
@@ -199,7 +259,7 @@ namespace YoutubePlaylistDownloader
 
         private void nudThreads_ValueChanged(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             pd.maxThreads = (int)nudThreads.Value;
         }
 
@@ -215,7 +275,6 @@ namespace YoutubePlaylistDownloader
                 Console.WriteLine("All videos downloaded!");
                 pd.ConsoleWrittenTo("All videos downloaded!");
 
-                isdownloading = false;
                 downloadIsComplete d = new downloadIsComplete(DownloadComplete);
                 Invoke(d);
             }
@@ -223,6 +282,26 @@ namespace YoutubePlaylistDownloader
 
         void DownloadComplete()
         {
+            EnableControls();
+            //GetVideos();
+            lblSelected.Text = "0 items queued";
+        }
+
+        void DisableControls()
+        {
+            isdisabled = true;
+            btnDownload.Enabled = false;
+            btnGet.Enabled = false;
+            btnBrowse.Enabled = false;
+            txtPlaylistInput.Enabled = false;
+            nudThreads.Enabled = false;
+            chkIncrement.Enabled = false;
+            chkSelectAll.Enabled = false;
+            lstVideos.Enabled = false;
+        }
+        void EnableControls()
+        {
+            isdisabled = false;
             btnDownload.Enabled = true;
             btnGet.Enabled = true;
             btnBrowse.Enabled = true;
@@ -231,13 +310,11 @@ namespace YoutubePlaylistDownloader
             chkIncrement.Enabled = true;
             chkSelectAll.Enabled = true;
             lstVideos.Enabled = true;
-            GetVideos();
-            lblSelected.Text = "0 items queued";
         }
 
         private void chkIncrement_CheckedChanged(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             if (chkIncrement.Checked)
             {
                 pd.incremental = true;
@@ -250,7 +327,7 @@ namespace YoutubePlaylistDownloader
 
         private void lstVideos_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (isdownloading) return;
+            if (isdisabled) return;
             lblSelected.Text = lstVideos.CheckedItems.Count.ToString() + " items queued";
         }
 
