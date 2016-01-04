@@ -388,7 +388,7 @@ namespace YoutubePlaylistDownloader
                                         DownloadAudioFrom(currentVid, i + 1);
                                         break;
                                     }
-                                    catch (Exception e)
+                                    catch
                                     {
                                         var youtubeService = new YouTubeService(new BaseClientService.Initializer()
                                         {

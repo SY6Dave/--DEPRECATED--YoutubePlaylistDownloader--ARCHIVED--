@@ -83,7 +83,6 @@
             this.txtPlaylistInput.Name = "txtPlaylistInput";
             this.txtPlaylistInput.Size = new System.Drawing.Size(336, 20);
             this.txtPlaylistInput.TabIndex = 3;
-            this.txtPlaylistInput.TextChanged += new System.EventHandler(this.txtPlaylistInput_TextChanged);
             // 
             // btnGet
             // 
@@ -210,6 +209,7 @@
             // 
             // Form1
             // 
+            this.AcceptButton = this.btnGet;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(717, 481);
