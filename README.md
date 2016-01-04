@@ -2,6 +2,9 @@
 ##Overview
 A desktop application to download YouTube videos as mp3s.
 
+###Installation
+To install the application for personal use, [go to this link] (http://www.davidmortiboy.com/shr/ytp/publish.html) and click install. Any additional updates published will be automatically downloaded when you run the program.
+
 ##License
 YoutubePlaylistDownloader is licensed under [The GNU General Public License v2 (GPLv2)] (http://opensource.org/licenses/gpl-2.0).
 It includes the [YoutubeExtractor library] (https://github.com/flagbug/YoutubeExtractor) which is [MIT licensed] (http://opensource.org/licenses/MIT) and that in itself includes code from [FLV Extract] (http://moitah.net/) which is licensed under GPLv2.
