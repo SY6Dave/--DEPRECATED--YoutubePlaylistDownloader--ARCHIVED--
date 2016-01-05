@@ -223,14 +223,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="YoutubePlaylistDownloader.exe" size="40960">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="YoutubePlaylistDownloader.exe" size="41984">
       <assemblyIdentity name="YoutubePlaylistDownloader" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Z8HVP9ranIriDlClWG8IGuvlBO57TUCShF2JBC5tuyg=</dsig:DigestValue>
+        <dsig:DigestValue>1IUQlw0LbXmb3BRG+L5OgeEyR5w15nn2IC2C1EZf2Lk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -51,8 +51,10 @@ namespace YoutubePlaylistDownloader
 
             List<Downloadable> downloading = new List<Downloadable>();
 
-            foreach (Downloadable d in lstVideos.CheckedItems)
+            for(int i = 0; i < lstVideos.CheckedItems.Count; i=i+1)
             {
+                Downloadable d = (Downloadable)lstVideos.CheckedItems[i];
+                d.Index = i;
                 downloading.Add(d);
             }
 
@@ -68,6 +70,13 @@ namespace YoutubePlaylistDownloader
                     Console.WriteLine(downloading.Count + " items queued for download");
                     pd.ConsoleWrittenTo(downloading.Count + " items queued for download");
                     Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                lstVideos.Items.Clear();
+                for (int i = 0; i < downloading.Count; i=i+1)
+                {
+                    lstVideos.Items.Add(downloading[i]);
+                    lstVideos.SetItemChecked(i, true);
                 }
 
                 pd.StartThreads(downloading);
@@ -117,6 +126,7 @@ namespace YoutubePlaylistDownloader
             Console.Clear();
             pd.consoleLog.Clear();
             chkSelectAll.Checked = false;
+            progGlobal.Value = 0;
 
             lock (consolelock)
             {
@@ -289,7 +299,6 @@ namespace YoutubePlaylistDownloader
                 Console.CursorLeft = 0;
                 Console.WriteLine("All videos downloaded!");
                 pd.ConsoleWrittenTo("All videos downloaded!");
-
                 downloadIsComplete d = new downloadIsComplete(DownloadComplete);
                 Invoke(d);
             }
@@ -299,7 +308,13 @@ namespace YoutubePlaylistDownloader
         {
             EnableControls();
             //GetVideos();
+            pd.videos.Clear();
+            lstVideos.Items.Clear();
+            lstVideos.Refresh();
+            txtPlaylistInput.Text = "";
             lblSelected.Text = "0 items queued";
+            pd.globalPercentage = 0;
+            progGlobal.Value = 100;
         }
 
         void DisableControls()
@@ -365,10 +380,15 @@ namespace YoutubePlaylistDownloader
         {
             //Downloadable newD = (Downloadable)lstVideos.Items[d.Index];
 
-           // lock(lockList)
-           // {
+            lock(lockList)
+            {
                 lstVideos.Refresh();
-           // }
+                try
+                {
+                    progGlobal.Value = (int)pd.globalPercentage;
+                }
+                catch { }
+            }
         }
 
         private void lstVideos_ItemCheck(object sender, ItemCheckEventArgs e)

@@ -28,6 +28,8 @@ namespace YoutubePlaylistDownloader
             base.OnDrawItem(e);
 
             double percent = 0;
+            bool error = false;
+            bool preparing = false;
 
             if(Form1.pd.videos != null)
             {
@@ -39,8 +41,24 @@ namespace YoutubePlaylistDownloader
                         {
                             if (d.Index == e.Index)
                             {
-                                percent = d.PercentCompletion / 100;
-                                break;
+                                if(d.PercentCompletion == -1)
+                                {
+                                    percent = 1;
+                                    error = true;
+                                    break;
+                                }
+                                else if(d.Preparing == true)
+                                {
+                                    percent = 1;
+                                    preparing = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    percent = d.PercentCompletion / 100;
+                                    break;
+                                }
+                                
                             }
                         }
                     }
@@ -48,9 +66,7 @@ namespace YoutubePlaylistDownloader
                     {
                         return;
                     }
-                    
                 }
-                
             }
 
             Rectangle rect = e.Bounds;
@@ -60,7 +76,21 @@ namespace YoutubePlaylistDownloader
             rect.Height -= 2;
             rect.Width = (int)((float)rect.Width * percent);
 
-            Color rectCol = Color.FromArgb(80, Color.Green);
+            Color rectCol;
+
+            if(preparing)
+            {
+                rectCol = Color.FromArgb(80, Color.Orange);
+            }
+            else if(error)
+            {
+                rectCol = Color.FromArgb(80, Color.Red);
+            }
+            else
+            {
+                rectCol = Color.FromArgb(80, Color.Green);
+            }
+            
             e.Graphics.FillRectangle(new SolidBrush(rectCol), rect);
         }
 

@@ -55,6 +55,18 @@ namespace YoutubePlaylistDownloader
                 completed = value;
             }
         }
+        private bool preparing;
+        public bool Preparing
+        {
+            get
+            {
+                return preparing;
+            }
+            set
+            {
+                preparing = value;
+            }
+        }
         private string url;
         public string Url
         {
@@ -138,6 +150,7 @@ namespace YoutubePlaylistDownloader
             this.index = inIndex;
             this.id = inId;
             this.percentCompletion = 0;
+            this.preparing = false;
 
             if (inName.Length > 42)
             {
@@ -170,6 +183,8 @@ namespace YoutubePlaylistDownloader
         public bool incremental = true;
         public int maxThreads = 4;
         public int maxVids = 50;
+        public double globalPercentage = 0;
+        object lockGlobalPerc = new object();
         int vidCount = 0;
         public List<string> consoleLog = new List<string>();
         int threadFinishedCount = 0;
@@ -449,6 +464,7 @@ namespace YoutubePlaylistDownloader
                                                     Console.CursorLeft = 0;
                                                     Console.WriteLine(currentVid.DisplayName + " blocked in your region!");
                                                     ConsoleWrittenTo(currentVid.DisplayName + " blocked in your region!");
+                                                    currentVid.SetPercent(-1);
                                                     Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
@@ -465,6 +481,7 @@ namespace YoutubePlaylistDownloader
                                                     Console.CursorLeft = 0;
                                                     Console.WriteLine("Failed to download after 10 attempts. Skipping video..");
                                                     ConsoleWrittenTo("Failed to download after 10 attempts. Skipping video..");
+                                                    currentVid.SetPercent(-1);
                                                     Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
@@ -517,6 +534,10 @@ namespace YoutubePlaylistDownloader
                 Console.WriteLine("Preparing to download " + InVideo.DisplayName);
                 ConsoleWrittenTo("Preparing to download " + InVideo.DisplayName);
             }
+
+            InVideo.Preparing = true;
+            ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
+            Program.frm.Invoke(ld);
 
             string link = InVideo.Url;
             string countPrefix = count.ToString();
@@ -585,24 +606,37 @@ namespace YoutubePlaylistDownloader
 
         void DownloadProgress(double ProgressPercentage, Downloadable d)
         {
+            d.Preparing = false;
             string title = d.DisplayName;
             double percentcalc = Math.Round(ProgressPercentage * 0.85, 2);
+            if (percentcalc > 99.9) percentcalc = 100;
 
-            for (int i = 0; i < Form1.pd.videos.Count; i=i+1)
+            //for (int i = 0; i < videos.Count; i=i+1)
+            // {
+            lock (listlock)
             {
-                lock(listlock)
+                videos[d.Index].SetPercent(percentcalc);
+                globalPercentage = 0;
+                for (int i = 0; i < videos.Count; i = i + 1)
                 {
-                    if (Form1.pd.videos[i].Index == d.Index)
+                    if (videos[i].PercentCompletion == -1)
                     {
-                        Form1.pd.videos[i].SetPercent(percentcalc);
-                        break;
+                        globalPercentage += 100;
+                    }
+                    else
+                    {
+                        globalPercentage += videos[i].PercentCompletion;
                     }
                 }
+                globalPercentage /= (videos.Count * 100);
+                globalPercentage *= 100;
+                // if (videos[i].Index == d.Index)
+                //{
+                //  videos[i].SetPercent(percentcalc);
+                //    break;
+                // }
             }
-
-                d.PercentCompletion = percentcalc;
-
-            if (percentcalc > 99.9) percentcalc = 100;
+            //}
             lock (consolelock)
             {
                 bool firstwrite = true;
@@ -645,29 +679,43 @@ namespace YoutubePlaylistDownloader
                     {
                         Console.WriteLine(e.Message);
                     }*/
-                    
+
                 }
             }
         }
 
         void ExtractionProgress(double ProgressPercentage, Downloadable d)
         {
+            d.Preparing = false;
             string title = d.DisplayName;
             double percentcalc = Math.Round(85 + ProgressPercentage * 0.15, 2);
+            if (percentcalc > 99.9) percentcalc = 100;
 
-            for (int i = 0; i < Form1.pd.videos.Count; i = i + 1)
+            lock (listlock)
             {
-                if (Form1.pd.videos[i].Index == d.Index)
+                videos[d.Index].SetPercent(percentcalc);
+                globalPercentage = 0;
+                for (int i = 0; i < videos.Count; i = i + 1)
                 {
-                    lock(listlock)
+                    if (videos[i].PercentCompletion == -1)
                     {
-                        Form1.pd.videos[i].SetPercent(percentcalc);
-                        break;
+                        globalPercentage += 100;
+                    }
+                    else
+                    {
+                        globalPercentage += videos[i].PercentCompletion;
                     }
                 }
+                globalPercentage /= (videos.Count * 100);
+                globalPercentage *= 100;
+                // if (videos[i].Index == d.Index)
+                //{
+                //  videos[i].SetPercent(percentcalc);
+                //    break;
+                // }
             }
 
-            if (percentcalc > 99.9) percentcalc = 100;
+
             lock (consolelock)
             {
                 bool firstwrite = true;

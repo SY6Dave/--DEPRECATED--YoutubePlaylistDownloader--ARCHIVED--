@@ -44,6 +44,7 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.btnSettings = new System.Windows.Forms.Button();
             this.lstVideos = new YoutubePlaylistDownloader.CustomCheckList();
+            this.progGlobal = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // btnDownload
@@ -184,12 +185,22 @@
             this.lstVideos.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstVideos_ItemCheck);
             this.lstVideos.SelectedIndexChanged += new System.EventHandler(this.lstVideos_SelectedIndexChanged);
             // 
+            // progGlobal
+            // 
+            this.progGlobal.Location = new System.Drawing.Point(46, 426);
+            this.progGlobal.MarqueeAnimationSpeed = 0;
+            this.progGlobal.Name = "progGlobal";
+            this.progGlobal.Size = new System.Drawing.Size(606, 13);
+            this.progGlobal.Step = 1;
+            this.progGlobal.TabIndex = 17;
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnGet;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(717, 481);
+            this.Controls.Add(this.progGlobal);
             this.Controls.Add(this.lstVideos);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.linkLabel1);
@@ -230,6 +241,7 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnSettings;
         private CustomCheckList lstVideos;
+        private System.Windows.Forms.ProgressBar progGlobal;
     }
 }
 
