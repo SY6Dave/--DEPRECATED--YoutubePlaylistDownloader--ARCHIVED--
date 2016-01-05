@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnDownload = new System.Windows.Forms.Button();
+            this.lstVideos = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtPlaylistInput = new System.Windows.Forms.TextBox();
             this.btnGet = new System.Windows.Forms.Button();
@@ -43,7 +44,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.btnSettings = new System.Windows.Forms.Button();
-            this.lstVideos = new YoutubePlaylistDownloader.CustomCheckList();
             this.SuspendLayout();
             // 
             // btnDownload
@@ -55,6 +55,16 @@
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
+            // 
+            // lstVideos
+            // 
+            this.lstVideos.CheckOnClick = true;
+            this.lstVideos.FormattingEnabled = true;
+            this.lstVideos.Location = new System.Drawing.Point(46, 146);
+            this.lstVideos.Name = "lstVideos";
+            this.lstVideos.Size = new System.Drawing.Size(606, 274);
+            this.lstVideos.TabIndex = 1;
+            this.lstVideos.SelectedIndexChanged += new System.EventHandler(this.lstVideos_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -173,24 +183,12 @@
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
-            // lstVideos
-            // 
-            this.lstVideos.CheckOnClick = true;
-            this.lstVideos.FormattingEnabled = true;
-            this.lstVideos.Location = new System.Drawing.Point(46, 146);
-            this.lstVideos.Name = "lstVideos";
-            this.lstVideos.Size = new System.Drawing.Size(606, 274);
-            this.lstVideos.TabIndex = 16;
-            this.lstVideos.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstVideos_ItemCheck);
-            this.lstVideos.SelectedIndexChanged += new System.EventHandler(this.lstVideos_SelectedIndexChanged);
-            // 
             // Form1
             // 
             this.AcceptButton = this.btnGet;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(717, 481);
-            this.Controls.Add(this.lstVideos);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label3);
@@ -203,6 +201,7 @@
             this.Controls.Add(this.btnGet);
             this.Controls.Add(this.txtPlaylistInput);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.lstVideos);
             this.Controls.Add(this.btnDownload);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
@@ -216,6 +215,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnDownload;
+        public System.Windows.Forms.CheckedListBox lstVideos;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtPlaylistInput;
         private System.Windows.Forms.Button btnGet;
@@ -229,7 +229,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnSettings;
-        private CustomCheckList lstVideos;
     }
 }
 

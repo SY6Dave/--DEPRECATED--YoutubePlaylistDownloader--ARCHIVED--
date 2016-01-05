@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-using System.Reflection;
 
 namespace YoutubePlaylistDownloader
 {
@@ -18,7 +17,6 @@ namespace YoutubePlaylistDownloader
         object consolelock = new object();
         object disablelock = new object();
         bool isdisabled = false;
-        bool listEnabled = true;
 
         public Form1()
         {
@@ -297,7 +295,7 @@ namespace YoutubePlaylistDownloader
             txtPlaylistInput.Enabled = false;
             chkIncrement.Enabled = false;
             chkSelectAll.Enabled = false;
-            setListEnabled(false);
+            lstVideos.Enabled = false;
         }
         void EnableControls()
         {
@@ -309,7 +307,7 @@ namespace YoutubePlaylistDownloader
             txtPlaylistInput.Enabled = true;
             chkIncrement.Enabled = true;
             chkSelectAll.Enabled = true;
-            setListEnabled(true);
+            lstVideos.Enabled = true;
         }
 
         private void chkIncrement_CheckedChanged(object sender, EventArgs e)
@@ -328,10 +326,8 @@ namespace YoutubePlaylistDownloader
         private void lstVideos_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isdisabled) return;
-
             lblSelected.Text = lstVideos.CheckedItems.Count.ToString() + " items queued";
         }
-
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -342,42 +338,6 @@ namespace YoutubePlaylistDownloader
         {
             frmSettings Settings = new frmSettings();
             Settings.ShowDialog();
-        }
-
-        object lockList = new object();
-
-        public void UpdateListItemName(Downloadable d)
-        {
-            //Downloadable newD = (Downloadable)lstVideos.Items[d.Index];
-
-            lock(lockList)
-            {
-                lstVideos.Refresh();
-            }
-        }
-
-        private void lstVideos_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if(!listEnabled)
-            {
-                e.NewValue = e.CurrentValue;
-            }
-        }
-
-        private void setListEnabled(bool enabled)
-        {
-            listEnabled = enabled;
-            if (!listEnabled)
-            {
-                //lstVideos.BackColor = Color.FromKnownColor(KnownColor.Window);
-                //lstVideos.Color
-                lstVideos.SelectionMode = SelectionMode.None;
-            }
-            else
-            {
-               // lstVideos.BackColor = Color.FromKnownColor(KnownColor.Control);
-                lstVideos.SelectionMode = SelectionMode.One;
-            }
         }
     }
 }
