@@ -21,6 +21,8 @@ namespace YoutubePlaylistDownloader
             this.DrawMode = DrawMode.OwnerDrawFixed;
         }
 
+        object listlock = new object();
+
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
             base.OnDrawItem(e);
@@ -29,14 +31,26 @@ namespace YoutubePlaylistDownloader
 
             if(Form1.pd.videos != null)
             {
-                foreach (Downloadable d in Form1.pd.videos)
+                lock(listlock)
                 {
-                    if (d.Index == e.Index)
+                    try
                     {
-                        percent = d.PercentCompletion / 100;
-                        break;
+                        foreach (Downloadable d in Form1.pd.videos)
+                        {
+                            if (d.Index == e.Index)
+                            {
+                                percent = d.PercentCompletion / 100;
+                                break;
+                            }
+                        }
                     }
+                    catch
+                    {
+                        return;
+                    }
+                    
                 }
+                
             }
 
             Rectangle rect = e.Bounds;

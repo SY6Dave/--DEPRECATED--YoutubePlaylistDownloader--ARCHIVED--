@@ -17,7 +17,7 @@ using System.Windows.Forms;
 
 namespace YoutubePlaylistDownloader
 {
-    public struct Downloadable
+    public class Downloadable
     {
         private Object toLock;
         public Object ToLock
@@ -156,6 +156,11 @@ namespace YoutubePlaylistDownloader
             {
                 displayName = inName;
             }
+        }
+
+        public void SetPercent(double percentValue)
+        {
+            this.PercentCompletion = percentValue;
         }
     }
 
@@ -575,21 +580,23 @@ namespace YoutubePlaylistDownloader
             consoleLog.Add(inString);
         }
 
-        delegate void ListDelegate(Downloadable d);
+        delegate void ListDelegate();
+        object listlock = new object();
 
         void DownloadProgress(double ProgressPercentage, Downloadable d)
         {
             string title = d.DisplayName;
             double percentcalc = Math.Round(ProgressPercentage * 0.85, 2);
 
-            for (int i = 0; i < videos.Count; i=i+1)
+            for (int i = 0; i < Form1.pd.videos.Count; i=i+1)
             {
-                if(videos[i].Index == d.Index)
+                lock(listlock)
                 {
-                    videos.RemoveAt(i);
-                    d.PercentCompletion = percentcalc;
-                    videos.Insert(i, d);
-                    break;
+                    if (Form1.pd.videos[i].Index == d.Index)
+                    {
+                        Form1.pd.videos[i].SetPercent(percentcalc);
+                        break;
+                    }
                 }
             }
 
@@ -628,18 +635,16 @@ namespace YoutubePlaylistDownloader
                     Console.CursorTop = consoleLog.Count;
                     Console.CursorLeft = 0;
 
-                    ListDelegate ld = new ListDelegate(Program.frm.UpdateListItemName);
-                    object[] paramsArray = new object[1];
-                    paramsArray[0] = d;
+                    /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
 
                     try
                     {
-                        Program.frm.Invoke(ld, paramsArray);
+                        Program.frm.Invoke(ld);
                     }
                     catch(Exception e)
                     {
                         Console.WriteLine(e.Message);
-                    }
+                    }*/
                     
                 }
             }
@@ -650,14 +655,15 @@ namespace YoutubePlaylistDownloader
             string title = d.DisplayName;
             double percentcalc = Math.Round(85 + ProgressPercentage * 0.15, 2);
 
-            for (int i = 0; i < videos.Count; i = i + 1)
+            for (int i = 0; i < Form1.pd.videos.Count; i = i + 1)
             {
-                if (videos[i].Index == d.Index)
+                if (Form1.pd.videos[i].Index == d.Index)
                 {
-                    videos.RemoveAt(i);
-                    d.PercentCompletion = percentcalc;
-                    videos.Insert(i, d);
-                    break;
+                    lock(listlock)
+                    {
+                        Form1.pd.videos[i].SetPercent(percentcalc);
+                        break;
+                    }
                 }
             }
 
@@ -694,18 +700,16 @@ namespace YoutubePlaylistDownloader
                     Console.CursorTop = consoleLog.Count;
                     Console.CursorLeft = 0;
 
-                    ListDelegate ld = new ListDelegate(Program.frm.UpdateListItemName);
-                    object[] paramsArray = new object[1];
-                    paramsArray[0] = d;
+                    /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
 
                     try
                     {
-                        Program.frm.Invoke(ld, paramsArray);
+                        Program.frm.Invoke(ld);
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                    }
+                    }*/
                 }
             }
         }

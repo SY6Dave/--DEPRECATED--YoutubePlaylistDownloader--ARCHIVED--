@@ -74,6 +74,9 @@ namespace YoutubePlaylistDownloader
 
                 DisableControls();
                 isdisabled = true;
+
+                Thread updatethread = new Thread(UpdateListThread);
+                updatethread.Start();
             }
             else
             {
@@ -88,6 +91,18 @@ namespace YoutubePlaylistDownloader
                 }
 
                 return;
+            }
+        }
+
+        delegate void myDel();
+
+        void UpdateListThread()
+        {
+            while(isdisabled)
+            {
+                myDel ud = new myDel(UpdateList);
+                Invoke(ud);
+                Thread.Sleep(50);
             }
         }
 
@@ -346,14 +361,14 @@ namespace YoutubePlaylistDownloader
 
         object lockList = new object();
 
-        public void UpdateListItemName(Downloadable d)
+        public void UpdateList()
         {
             //Downloadable newD = (Downloadable)lstVideos.Items[d.Index];
 
-            lock(lockList)
-            {
+           // lock(lockList)
+           // {
                 lstVideos.Refresh();
-            }
+           // }
         }
 
         private void lstVideos_ItemCheck(object sender, ItemCheckEventArgs e)
