@@ -466,6 +466,7 @@ namespace YoutubePlaylistDownloader
                                                     //ConsoleWrittenTo(currentVid.DisplayName + " blocked in your region!");
                                                     currentVid.SetPercent(-1);
                                                     Program.frm.errors++;
+                                                    Program.frm.remaining--;
                                                    // Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
@@ -484,6 +485,7 @@ namespace YoutubePlaylistDownloader
                                                    // ConsoleWrittenTo("Failed to download after 10 attempts. Skipping video..");
                                                     currentVid.SetPercent(-1);
                                                     Program.frm.errors++;
+                                                    Program.frm.remaining--;
                                                   //  Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
