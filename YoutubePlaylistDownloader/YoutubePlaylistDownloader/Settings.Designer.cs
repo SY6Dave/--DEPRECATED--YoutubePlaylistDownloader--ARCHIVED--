@@ -46,7 +46,7 @@
             0,
             0,
             0});
-            this.nudMaxVids.Location = new System.Drawing.Point(156, 77);
+            this.nudMaxVids.Location = new System.Drawing.Point(173, 77);
             this.nudMaxVids.Maximum = new decimal(new int[] {
             2500,
             0,
@@ -62,7 +62,7 @@
             this.nudMaxVids.Size = new System.Drawing.Size(53, 20);
             this.nudMaxVids.TabIndex = 16;
             this.nudMaxVids.Value = new decimal(new int[] {
-            50,
+            100,
             0,
             0,
             0});
@@ -70,7 +70,7 @@
             // 
             // nudThreads
             // 
-            this.nudThreads.Location = new System.Drawing.Point(156, 51);
+            this.nudThreads.Location = new System.Drawing.Point(183, 51);
             this.nudThreads.Maximum = new decimal(new int[] {
             16,
             0,
@@ -85,7 +85,7 @@
             this.nudThreads.Size = new System.Drawing.Size(43, 20);
             this.nudThreads.TabIndex = 17;
             this.nudThreads.Value = new decimal(new int[] {
-            4,
+            1,
             0,
             0,
             0});
@@ -94,16 +94,16 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(53, 53);
+            this.label2.Location = new System.Drawing.Point(12, 53);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 13);
+            this.label2.Size = new System.Drawing.Size(165, 13);
             this.label2.TabIndex = 18;
-            this.label2.Text = "Number of threads:";
+            this.label2.Text = "Number of threads (experimental):";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(86, 79);
+            this.label1.Location = new System.Drawing.Point(103, 79);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 19;
@@ -140,6 +140,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.nudThreads);
             this.Controls.Add(this.nudMaxVids);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSettings";
             this.Text = "Settings";

@@ -38,13 +38,15 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.chkIncrement = new System.Windows.Forms.CheckBox();
             this.lblSelected = new System.Windows.Forms.Label();
-            this.lblPath = new System.Windows.Forms.Label();
             this.lblMsg = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.btnSettings = new System.Windows.Forms.Button();
-            this.lstVideos = new YoutubePlaylistDownloader.CustomCheckList();
             this.progGlobal = new System.Windows.Forms.ProgressBar();
+            this.ssInfo = new System.Windows.Forms.StatusStrip();
+            this.ssInfoLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lstVideos = new YoutubePlaylistDownloader.CustomCheckList();
+            this.ssInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnDownload
@@ -72,6 +74,7 @@
             this.txtPlaylistInput.Name = "txtPlaylistInput";
             this.txtPlaylistInput.Size = new System.Drawing.Size(336, 20);
             this.txtPlaylistInput.TabIndex = 3;
+            this.txtPlaylistInput.TextChanged += new System.EventHandler(this.txtPlaylistInput_TextChanged);
             // 
             // btnGet
             // 
@@ -126,15 +129,6 @@
             this.lblSelected.TabIndex = 10;
             this.lblSelected.Text = "0 items queued";
             // 
-            // lblPath
-            // 
-            this.lblPath.AutoSize = true;
-            this.lblPath.Location = new System.Drawing.Point(43, 442);
-            this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(145, 13);
-            this.lblPath.TabIndex = 11;
-            this.lblPath.Text = "No download folder selected!";
-            // 
             // lblMsg
             // 
             this.lblMsg.AutoSize = true;
@@ -147,7 +141,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(519, 442);
+            this.label3.Location = new System.Drawing.Point(519, 452);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(135, 13);
             this.label3.TabIndex = 13;
@@ -156,7 +150,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(530, 459);
+            this.linkLabel1.Location = new System.Drawing.Point(530, 465);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(122, 13);
             this.linkLabel1.TabIndex = 14;
@@ -174,6 +168,31 @@
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
+            // progGlobal
+            // 
+            this.progGlobal.Location = new System.Drawing.Point(46, 426);
+            this.progGlobal.MarqueeAnimationSpeed = 0;
+            this.progGlobal.Name = "progGlobal";
+            this.progGlobal.Size = new System.Drawing.Size(606, 13);
+            this.progGlobal.Step = 1;
+            this.progGlobal.TabIndex = 17;
+            // 
+            // ssInfo
+            // 
+            this.ssInfo.AllowMerge = false;
+            this.ssInfo.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ssInfoLabel});
+            this.ssInfo.Location = new System.Drawing.Point(0, 489);
+            this.ssInfo.Name = "ssInfo";
+            this.ssInfo.Size = new System.Drawing.Size(717, 22);
+            this.ssInfo.SizingGrip = false;
+            this.ssInfo.TabIndex = 18;
+            // 
+            // ssInfoLabel
+            // 
+            this.ssInfoLabel.Name = "ssInfoLabel";
+            this.ssInfoLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // lstVideos
             // 
             this.lstVideos.CheckOnClick = true;
@@ -185,28 +204,19 @@
             this.lstVideos.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstVideos_ItemCheck);
             this.lstVideos.SelectedIndexChanged += new System.EventHandler(this.lstVideos_SelectedIndexChanged);
             // 
-            // progGlobal
-            // 
-            this.progGlobal.Location = new System.Drawing.Point(46, 426);
-            this.progGlobal.MarqueeAnimationSpeed = 0;
-            this.progGlobal.Name = "progGlobal";
-            this.progGlobal.Size = new System.Drawing.Size(606, 13);
-            this.progGlobal.Step = 1;
-            this.progGlobal.TabIndex = 17;
-            // 
             // Form1
             // 
             this.AcceptButton = this.btnGet;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 481);
+            this.ClientSize = new System.Drawing.Size(717, 511);
+            this.Controls.Add(this.ssInfo);
             this.Controls.Add(this.progGlobal);
             this.Controls.Add(this.lstVideos);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblMsg);
-            this.Controls.Add(this.lblPath);
             this.Controls.Add(this.lblSelected);
             this.Controls.Add(this.chkIncrement);
             this.Controls.Add(this.btnBrowse);
@@ -215,10 +225,15 @@
             this.Controls.Add(this.txtPlaylistInput);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnDownload);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Youtube Playlist Downloader v1.0";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.ssInfo.ResumeLayout(false);
+            this.ssInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,13 +250,14 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.CheckBox chkIncrement;
         private System.Windows.Forms.Label lblSelected;
-        private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.Label lblMsg;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnSettings;
         private CustomCheckList lstVideos;
         private System.Windows.Forms.ProgressBar progGlobal;
+        private System.Windows.Forms.StatusStrip ssInfo;
+        public System.Windows.Forms.ToolStripStatusLabel ssInfoLabel;
     }
 }
 

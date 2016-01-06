@@ -181,8 +181,8 @@ namespace YoutubePlaylistDownloader
     {
         public string savePath = "";
         public bool incremental = true;
-        public int maxThreads = 4;
-        public int maxVids = 50;
+        public int maxThreads = 1;
+        public int maxVids = 100;
         public double globalPercentage = 0;
         object lockGlobalPerc = new object();
         int vidCount = 0;
@@ -205,12 +205,12 @@ namespace YoutubePlaylistDownloader
 
                 lock (consolelock)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.CursorTop = consoleLog.Count;
-                    Console.CursorLeft = 0;
-                    Console.WriteLine("Thread " + (i + 1) + " started");
-                    ConsoleWrittenTo("Thread " + (i + 1) + " started");
-                    Console.ForegroundColor = ConsoleColor.White;
+                   // Console.ForegroundColor = ConsoleColor.DarkYellow;
+                   // Console.CursorTop = consoleLog.Count;
+                  //  Console.CursorLeft = 0;
+                  //  Console.WriteLine("Thread " + (i + 1) + " started");
+                  //  ConsoleWrittenTo("Thread " + (i + 1) + " started");
+                  //  Console.ForegroundColor = ConsoleColor.White;
                 }
 
             }
@@ -459,13 +459,14 @@ namespace YoutubePlaylistDownloader
                                             {
                                                 lock (consolelock)
                                                 {
-                                                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                                                    Console.CursorTop = consoleLog.Count;
-                                                    Console.CursorLeft = 0;
-                                                    Console.WriteLine(currentVid.DisplayName + " blocked in your region!");
-                                                    ConsoleWrittenTo(currentVid.DisplayName + " blocked in your region!");
+                                                    //Console.ForegroundColor = ConsoleColor.DarkRed;
+                                                   // Console.CursorTop = consoleLog.Count;
+                                                   // Console.CursorLeft = 0;
+                                                   // Console.WriteLine(currentVid.DisplayName + " blocked in your region!");
+                                                    //ConsoleWrittenTo(currentVid.DisplayName + " blocked in your region!");
                                                     currentVid.SetPercent(-1);
-                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                    Program.frm.errors++;
+                                                   // Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
                                             }
@@ -476,13 +477,14 @@ namespace YoutubePlaylistDownloader
                                             {
                                                 lock (consolelock)
                                                 {
-                                                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                                                    Console.CursorTop = consoleLog.Count;
-                                                    Console.CursorLeft = 0;
-                                                    Console.WriteLine("Failed to download after 10 attempts. Skipping video..");
-                                                    ConsoleWrittenTo("Failed to download after 10 attempts. Skipping video..");
+                                                   // Console.ForegroundColor = ConsoleColor.DarkRed;
+                                                   // Console.CursorTop = consoleLog.Count;
+                                                   // Console.CursorLeft = 0;
+                                                   // Console.WriteLine("Failed to download after 10 attempts. Skipping video..");
+                                                   // ConsoleWrittenTo("Failed to download after 10 attempts. Skipping video..");
                                                     currentVid.SetPercent(-1);
-                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                    Program.frm.errors++;
+                                                  //  Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
                                             }
@@ -499,8 +501,8 @@ namespace YoutubePlaylistDownloader
                 {
                     lock (consolelock)
                     {
-                        Console.WriteLine(e.ToString());
-                        ConsoleWrittenTo(e.ToString());
+                       // Console.WriteLine(e.ToString());
+                       // ConsoleWrittenTo(e.ToString());
                     }
                     continue;
                 }
@@ -508,18 +510,18 @@ namespace YoutubePlaylistDownloader
 
             lock (consolelock)
             {
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.CursorTop = consoleLog.Count;
-                Console.CursorLeft = 0;
-                Console.WriteLine("Thread " + Thread.CurrentThread.Name + " finished executing");
-                ConsoleWrittenTo("Thread " + Thread.CurrentThread.Name + " finished executing");
+                //Console.ForegroundColor = ConsoleColor.DarkYellow;
+                //Console.CursorTop = consoleLog.Count;
+               // Console.CursorLeft = 0;
+               // Console.WriteLine("Thread " + Thread.CurrentThread.Name + " finished executing");
+               // ConsoleWrittenTo("Thread " + Thread.CurrentThread.Name + " finished executing");
                 threadFinishedCount++;
                 if (threadFinishedCount >= maxThreads)
                 {
                     Program.frm.threadsComplete();
                     threadFinishedCount = 0;
                 }
-                Console.ForegroundColor = ConsoleColor.White;
+               // Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
@@ -527,12 +529,12 @@ namespace YoutubePlaylistDownloader
         {
             lock (consolelock)
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.CursorTop = consoleLog.Count;
-                Console.CursorLeft = 0;
+                //Console.ForegroundColor = ConsoleColor.White;
+               // Console.CursorTop = consoleLog.Count;
+               // Console.CursorLeft = 0;
 
-                Console.WriteLine("Preparing to download " + InVideo.DisplayName);
-                ConsoleWrittenTo("Preparing to download " + InVideo.DisplayName);
+              //  Console.WriteLine("Preparing to download " + InVideo.DisplayName);
+               // ConsoleWrittenTo("Preparing to download " + InVideo.DisplayName);
             }
 
             InVideo.Preparing = true;
@@ -543,12 +545,12 @@ namespace YoutubePlaylistDownloader
             string countPrefix = count.ToString();
             countPrefix = countPrefix.PadLeft(padLeft, '0');
 
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
+            VideoInfo video = DownloadUrlResolver.GetDownloadUrls(link);
 
-            VideoInfo video = videoInfos
+            /*VideoInfo video = videoInfos
                 .Where(info => info.CanExtractAudio)
                 .OrderByDescending(info => info.AudioBitrate)
-                .First();
+                .First();*/
 
             if (video.RequiresDecryption)
             {
@@ -586,12 +588,15 @@ namespace YoutubePlaylistDownloader
 
             lock (consolelock)
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.CursorTop = consoleLog.Count;
-                Console.CursorLeft = 0;
-                Console.WriteLine(InVideo.DisplayName + " complete!");
-                ConsoleWrittenTo(InVideo.DisplayName + " complete!");
-                Console.ForegroundColor = ConsoleColor.White;
+               // Console.ForegroundColor = ConsoleColor.DarkGreen;
+               // Console.CursorTop = consoleLog.Count;
+               /// Console.CursorLeft = 0;
+               // Console.WriteLine(InVideo.DisplayName + " complete!");
+              //  ConsoleWrittenTo(InVideo.DisplayName + " complete!");
+
+                Program.frm.remaining--;
+
+              //  Console.ForegroundColor = ConsoleColor.White;
             }
 
         }
@@ -654,20 +659,20 @@ namespace YoutubePlaylistDownloader
 
                 if (firstwrite)
                 {
-                    Console.WriteLine("Downloading " + title + ": " + percentcalc + "%");
-                    ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
+                   // Console.WriteLine("Downloading " + title + ": " + percentcalc + "%");
+                   // ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
                 }
                 else
                 {
-                    consoleLog.RemoveAt(lineIndex);
-                    consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
+                   // consoleLog.RemoveAt(lineIndex);
+                   // consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
 
-                    Console.SetCursorPosition(0, lineIndex);
-                    Console.Write(new string(' ', Console.WindowWidth - 1));
-                    Console.SetCursorPosition(0, lineIndex);
-                    Console.WriteLine(consoleLog[lineIndex]);
-                    Console.CursorTop = consoleLog.Count;
-                    Console.CursorLeft = 0;
+                  //  Console.SetCursorPosition(0, lineIndex);
+                  //  Console.Write(new string(' ', Console.WindowWidth - 1));
+                  //  Console.SetCursorPosition(0, lineIndex);
+                  //  Console.WriteLine(consoleLog[lineIndex]);
+                  //  Console.CursorTop = consoleLog.Count;
+                  //  Console.CursorLeft = 0;
 
                     /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
 
@@ -733,20 +738,20 @@ namespace YoutubePlaylistDownloader
 
                 if (firstwrite)
                 {
-                    Console.Write("Downloading " + title + ": " + percentcalc + "%");
-                    ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
+                    //Console.Write("Downloading " + title + ": " + percentcalc + "%");
+                   // ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
                 }
                 else
                 {
-                    consoleLog.RemoveAt(lineIndex);
-                    consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
+                  //  consoleLog.RemoveAt(lineIndex);
+                  //  consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
 
-                    Console.SetCursorPosition(0, lineIndex);
-                    Console.Write(new string(' ', Console.WindowWidth - 1));
-                    Console.SetCursorPosition(0, lineIndex);
-                    Console.WriteLine(consoleLog[lineIndex]);
-                    Console.CursorTop = consoleLog.Count;
-                    Console.CursorLeft = 0;
+                  //  Console.SetCursorPosition(0, lineIndex);
+                  //  Console.Write(new string(' ', Console.WindowWidth - 1));
+                  //  Console.SetCursorPosition(0, lineIndex);
+                  //  Console.WriteLine(consoleLog[lineIndex]);
+                  //  Console.CursorTop = consoleLog.Count;
+                  //  Console.CursorLeft = 0;
 
                     /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
 
