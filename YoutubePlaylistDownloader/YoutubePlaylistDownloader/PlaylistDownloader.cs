@@ -186,13 +186,12 @@ namespace YoutubePlaylistDownloader
         public double globalPercentage = 0;
         object lockGlobalPerc = new object();
         int vidCount = 0;
-        public List<string> consoleLog = new List<string>();
         int threadFinishedCount = 0;
         string emptyPath = "https://www.youtube.com/watch?v=";
         string apikey = "AIzaSyDIqkGknC_2L1nZNraZItSeVSSL_liWbvg";
         int padLeft = 0;
         public List<Downloadable> videos;
-        object consolelock = new object();
+        object threadLocker = new object();
         string region = System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName;
 
         public void StartThreads(List<Downloadable> videos)
@@ -202,17 +201,6 @@ namespace YoutubePlaylistDownloader
                 Thread newThread = new Thread(this.DownloadAll);
                 newThread.Name = (i + 1).ToString();
                 newThread.Start(videos);
-
-                lock (consolelock)
-                {
-                   // Console.ForegroundColor = ConsoleColor.DarkYellow;
-                   // Console.CursorTop = consoleLog.Count;
-                  //  Console.CursorLeft = 0;
-                  //  Console.WriteLine("Thread " + (i + 1) + " started");
-                  //  ConsoleWrittenTo("Thread " + (i + 1) + " started");
-                  //  Console.ForegroundColor = ConsoleColor.White;
-                }
-
             }
         }
 
@@ -415,7 +403,6 @@ namespace YoutubePlaylistDownloader
             for (int i = 0; i < videos.Count; i = i + 1)
             {
                 var currentVid = videos[i];
-
                 try
                 {
                     var locked = !Monitor.TryEnter(currentVid.ToLock, 100);
@@ -457,17 +444,11 @@ namespace YoutubePlaylistDownloader
                                         {
                                             if (vid.ContentDetails.RegionRestriction.Blocked.Contains(region))
                                             {
-                                                lock (consolelock)
+                                                lock (threadLocker)
                                                 {
-                                                    //Console.ForegroundColor = ConsoleColor.DarkRed;
-                                                   // Console.CursorTop = consoleLog.Count;
-                                                   // Console.CursorLeft = 0;
-                                                   // Console.WriteLine(currentVid.DisplayName + " blocked in your region!");
-                                                    //ConsoleWrittenTo(currentVid.DisplayName + " blocked in your region!");
                                                     currentVid.SetPercent(-1);
                                                     Program.frm.errors++;
                                                     Program.frm.remaining--;
-                                                   // Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
                                             }
@@ -476,17 +457,11 @@ namespace YoutubePlaylistDownloader
                                         {
                                             if (n == 9)
                                             {
-                                                lock (consolelock)
+                                                lock (threadLocker)
                                                 {
-                                                   // Console.ForegroundColor = ConsoleColor.DarkRed;
-                                                   // Console.CursorTop = consoleLog.Count;
-                                                   // Console.CursorLeft = 0;
-                                                   // Console.WriteLine("Failed to download after 10 attempts. Skipping video..");
-                                                   // ConsoleWrittenTo("Failed to download after 10 attempts. Skipping video..");
                                                     currentVid.SetPercent(-1);
                                                     Program.frm.errors++;
                                                     Program.frm.remaining--;
-                                                  //  Console.ForegroundColor = ConsoleColor.White;
                                                 }
                                                 break;
                                             }
@@ -501,44 +476,23 @@ namespace YoutubePlaylistDownloader
                 }
                 catch (Exception e)
                 {
-                    lock (consolelock)
-                    {
-                       // Console.WriteLine(e.ToString());
-                       // ConsoleWrittenTo(e.ToString());
-                    }
                     continue;
                 }
             }
 
-            lock (consolelock)
+            lock (threadLocker)
             {
-                //Console.ForegroundColor = ConsoleColor.DarkYellow;
-                //Console.CursorTop = consoleLog.Count;
-               // Console.CursorLeft = 0;
-               // Console.WriteLine("Thread " + Thread.CurrentThread.Name + " finished executing");
-               // ConsoleWrittenTo("Thread " + Thread.CurrentThread.Name + " finished executing");
                 threadFinishedCount++;
                 if (threadFinishedCount >= maxThreads)
                 {
                     Program.frm.threadsComplete();
                     threadFinishedCount = 0;
                 }
-               // Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
         void DownloadAudioFrom(Downloadable InVideo, int count)
         {
-            lock (consolelock)
-            {
-                //Console.ForegroundColor = ConsoleColor.White;
-               // Console.CursorTop = consoleLog.Count;
-               // Console.CursorLeft = 0;
-
-              //  Console.WriteLine("Preparing to download " + InVideo.DisplayName);
-               // ConsoleWrittenTo("Preparing to download " + InVideo.DisplayName);
-            }
-
             InVideo.Preparing = true;
             ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
             Program.frm.Invoke(ld);
@@ -549,16 +503,10 @@ namespace YoutubePlaylistDownloader
 
             VideoInfo video = DownloadUrlResolver.GetDownloadUrls(link);
 
-            /*VideoInfo video = videoInfos
-                .Where(info => info.CanExtractAudio)
-                .OrderByDescending(info => info.AudioBitrate)
-                .First();*/
-
             if (video.RequiresDecryption)
             {
                 DownloadUrlResolver.DecryptDownloadUrl(video);
             }
-
 
             char[] legalTitleArray = video.Title.ToCharArray();
             string legalTitle = "";
@@ -586,26 +534,10 @@ namespace YoutubePlaylistDownloader
                 audioDownloader.Execute();
             }
 
-
-
-            lock (consolelock)
+            lock (threadLocker)
             {
-               // Console.ForegroundColor = ConsoleColor.DarkGreen;
-               // Console.CursorTop = consoleLog.Count;
-               /// Console.CursorLeft = 0;
-               // Console.WriteLine(InVideo.DisplayName + " complete!");
-              //  ConsoleWrittenTo(InVideo.DisplayName + " complete!");
-
                 Program.frm.remaining--;
-
-              //  Console.ForegroundColor = ConsoleColor.White;
             }
-
-        }
-
-        public void ConsoleWrittenTo(string inString)
-        {
-            consoleLog.Add(inString);
         }
 
         delegate void ListDelegate();
@@ -618,8 +550,6 @@ namespace YoutubePlaylistDownloader
             double percentcalc = Math.Round(ProgressPercentage * 0.85, 2);
             if (percentcalc > 99.9) percentcalc = 100;
 
-            //for (int i = 0; i < videos.Count; i=i+1)
-            // {
             lock (listlock)
             {
                 videos[d.Index].SetPercent(percentcalc);
@@ -637,57 +567,6 @@ namespace YoutubePlaylistDownloader
                 }
                 globalPercentage /= (videos.Count * 100);
                 globalPercentage *= 100;
-                // if (videos[i].Index == d.Index)
-                //{
-                //  videos[i].SetPercent(percentcalc);
-                //    break;
-                // }
-            }
-            //}
-            lock (consolelock)
-            {
-                bool firstwrite = true;
-                int lineIndex = 0;
-                for (int i = 0; i < consoleLog.Count; i = i + 1)
-                {
-                    //initially check if already been written
-                    if (consoleLog[i].Contains(title))
-                    {
-                        firstwrite = false;
-                        lineIndex = i;
-                        break;
-                    }
-                }
-
-                if (firstwrite)
-                {
-                   // Console.WriteLine("Downloading " + title + ": " + percentcalc + "%");
-                   // ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
-                }
-                else
-                {
-                   // consoleLog.RemoveAt(lineIndex);
-                   // consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
-
-                  //  Console.SetCursorPosition(0, lineIndex);
-                  //  Console.Write(new string(' ', Console.WindowWidth - 1));
-                  //  Console.SetCursorPosition(0, lineIndex);
-                  //  Console.WriteLine(consoleLog[lineIndex]);
-                  //  Console.CursorTop = consoleLog.Count;
-                  //  Console.CursorLeft = 0;
-
-                    /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
-
-                    try
-                    {
-                        Program.frm.Invoke(ld);
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }*/
-
-                }
             }
         }
 
@@ -715,57 +594,6 @@ namespace YoutubePlaylistDownloader
                 }
                 globalPercentage /= (videos.Count * 100);
                 globalPercentage *= 100;
-                // if (videos[i].Index == d.Index)
-                //{
-                //  videos[i].SetPercent(percentcalc);
-                //    break;
-                // }
-            }
-
-
-            lock (consolelock)
-            {
-                bool firstwrite = true;
-                int lineIndex = 0;
-                for (int i = 0; i < consoleLog.Count; i = i + 1)
-                {
-                    //initially check if already been written
-                    if (consoleLog[i].Contains(title))
-                    {
-                        firstwrite = false;
-                        lineIndex = i;
-                        break;
-                    }
-                }
-
-                if (firstwrite)
-                {
-                    //Console.Write("Downloading " + title + ": " + percentcalc + "%");
-                   // ConsoleWrittenTo("Downloading " + title + ": " + percentcalc + "%");
-                }
-                else
-                {
-                  //  consoleLog.RemoveAt(lineIndex);
-                  //  consoleLog.Insert(lineIndex, "Downloading " + title + ": " + percentcalc + "%");
-
-                  //  Console.SetCursorPosition(0, lineIndex);
-                  //  Console.Write(new string(' ', Console.WindowWidth - 1));
-                  //  Console.SetCursorPosition(0, lineIndex);
-                  //  Console.WriteLine(consoleLog[lineIndex]);
-                  //  Console.CursorTop = consoleLog.Count;
-                  //  Console.CursorLeft = 0;
-
-                    /*ListDelegate ld = new ListDelegate(Program.frm.UpdateList);
-
-                    try
-                    {
-                        Program.frm.Invoke(ld);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }*/
-                }
             }
         }
     }

@@ -30,7 +30,6 @@ namespace YoutubePlaylistDownloader
         private void Form1_Load(object sender, EventArgs e)
         {
             pd = new PlaylistDownloader();
-            //Console.Title = "Youtube Playlist Downloader v1.0";
         }
 
         private void btnDownload_Click(object sender, EventArgs e)
@@ -39,16 +38,6 @@ namespace YoutubePlaylistDownloader
             if (pd.savePath == "")
             {
                 ssInfoLabel.Text = "Please choose a download location";
-                lock (consolelock)
-                {
-                    //Console.ForegroundColor = ConsoleColor.DarkRed;
-                    //Console.CursorTop = pd.consoleLog.Count;
-                    //Console.CursorLeft = 0;
-                    //Console.WriteLine("Please choose a destination folder");
-                    //pd.ConsoleWrittenTo("Please choose a destination folder");
-                    //Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 return;
             }
 
@@ -63,18 +52,6 @@ namespace YoutubePlaylistDownloader
 
             if (downloading.Count > 0)
             {
-                //Console.Clear();
-                //pd.consoleLog.Clear();
-                lock (consolelock)
-                {
-                    //Console.ForegroundColor = ConsoleColor.Magenta;
-                    //Console.CursorTop = pd.consoleLog.Count;
-                    //Console.CursorLeft = 0;
-                    //Console.WriteLine(downloading.Count + " items queued for download");
-                    //pd.ConsoleWrittenTo(downloading.Count + " items queued for download");
-                    //Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 remaining = downloading.Count;
 
                 lstVideos.Items.Clear();
@@ -94,16 +71,6 @@ namespace YoutubePlaylistDownloader
             }
             else
             {
-                lock (consolelock)
-                {
-                    //Console.ForegroundColor = ConsoleColor.DarkRed;
-                    //Console.CursorTop = pd.consoleLog.Count;
-                    //Console.CursorLeft = 0;
-                    //Console.WriteLine("No videos selected");
-                   // pd.ConsoleWrittenTo("No videos selected");
-                    //Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 return;
             }
         }
@@ -133,18 +100,8 @@ namespace YoutubePlaylistDownloader
 
         void GetVideos()
         {
-            //Console.Clear();
-            //pd.consoleLog.Clear();
             chkSelectAll.Checked = false;
             progGlobal.Value = 0;
-
-            lock (consolelock)
-            {
-              //  Console.CursorTop = pd.consoleLog.Count;
-               // Console.CursorLeft = 0;
-              //  Console.WriteLine("Attempting to retrieve videos...");
-              //  pd.ConsoleWrittenTo("Attempting to retrieve videos...");
-            }
 
             ssInfoLabel.Text = "Attempting to retrieve videos...";
 
@@ -157,63 +114,23 @@ namespace YoutubePlaylistDownloader
             {
                 //no such playlist, try channel
 
-                lock (consolelock)
-                {
-                    //Console.ForegroundColor = ConsoleColor.DarkRed;
-                    //Console.CursorTop = pd.consoleLog.Count;
-                   // Console.CursorLeft = 0;
-                   // Console.WriteLine("No playlist found, looking for channels...");
-                   // pd.ConsoleWrittenTo("No playlist found, looking for channels...");
-                   // Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 ssInfoLabel.Text = "No playlist found, looking for channels...";
 
                 string channelPlaylist = pd.GetPlaylistIDFromChannel(txtPlaylistInput.Text);
                 if (channelPlaylist != null)
                 {
-                    lock (consolelock)
-                    {
-                        //Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        //Console.CursorTop = pd.consoleLog.Count;
-                        //Console.CursorLeft = 0;
-                        //Console.WriteLine("Channel found! Retrieving uploads...");
-                       // pd.ConsoleWrittenTo("Channel found! Retrieving uploads...");
-                       // Console.ForegroundColor = ConsoleColor.White;
-                    }
-
                     ssInfoLabel.Text = "Channel found! Retrieving uploads...";
 
                     videos = pd.GetVideosByPlaylist(channelPlaylist);
 
                     if (videos == null || videos.Count == 0)
                     {
-                        lock (consolelock)
-                        {
-                           // Console.ForegroundColor = ConsoleColor.DarkRed;
-                           // Console.CursorTop = pd.consoleLog.Count;
-                          // Console.CursorLeft = 0;
-                          //  Console.WriteLine("Channel has no uploads, querying search...");
-                          //  pd.ConsoleWrittenTo("Channel has no uploads, querying search...");
-                          //  Console.ForegroundColor = ConsoleColor.White;
-                        }
-
                         ssInfoLabel.Text = "Channel has no uploads, querying search...";
                     }
                 }
                 else
                 {
                     //no uploads
-                    lock (consolelock)
-                    {
-                        //Console.ForegroundColor = ConsoleColor.DarkRed;
-                        //Console.CursorTop = pd.consoleLog.Count;
-                       // Console.CursorLeft = 0;
-                       // Console.WriteLine("No channel found, querying search...");
-                       // pd.ConsoleWrittenTo("No channel found, querying search...");
-                       // Console.ForegroundColor = ConsoleColor.White;
-                    }
-
                     ssInfoLabel.Text = "No channel found, querying search...";
                     videos = pd.GetVideosByQuery(txtPlaylistInput.Text);
                 }
@@ -221,31 +138,11 @@ namespace YoutubePlaylistDownloader
             }
             else
             {
-                lock (consolelock)
-                {
-                    //Console.ForegroundColor = ConsoleColor.DarkGreen;
-                   // Console.CursorTop = pd.consoleLog.Count;
-                   // Console.CursorLeft = 0;
-                   // Console.WriteLine("Playlist found! Retrieving videos...");
-                   // pd.ConsoleWrittenTo("Playlist found! Retrieving videos...");
-                   // Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 ssInfoLabel.Text = "Playlist found! Retrieving videos...";
             }
 
             if (videos == null || videos.Count == 0)
             {
-                lock (consolelock)
-                {
-                   // Console.ForegroundColor = ConsoleColor.DarkRed;
-                   // Console.CursorTop = pd.consoleLog.Count;
-                   // Console.CursorLeft = 0;
-                   // Console.WriteLine("No videos found!");
-                   // pd.ConsoleWrittenTo("No videos found!");
-                   // Console.ForegroundColor = ConsoleColor.White;
-                }
-
                 ssInfoLabel.Text = "No videos found!";
 
                 txtPlaylistInput.BackColor = Color.Red;
@@ -253,13 +150,6 @@ namespace YoutubePlaylistDownloader
             }
             else
             {
-               // Console.ForegroundColor = ConsoleColor.DarkGreen;
-              //  Console.CursorTop = pd.consoleLog.Count;
-              //  Console.CursorLeft = 0;
-              //  Console.WriteLine("Got result! Populating list...");
-             //   pd.ConsoleWrittenTo("Got result! Populating list...");
-             //   Console.ForegroundColor = ConsoleColor.White;
-
                 ssInfoLabel.Text = "Got result! Populating list...";
             }
 
@@ -332,12 +222,6 @@ namespace YoutubePlaylistDownloader
         {
             lock (consolelock)
             {
-               // Console.ForegroundColor = ConsoleColor.White;
-               // Console.CursorTop = pd.consoleLog.Count;
-               // Console.CursorLeft = 0;
-               // Console.WriteLine("All videos downloaded!");
-               // pd.ConsoleWrittenTo("All videos downloaded!");
-
                 if(errors == 0)
                 {
                     ssInfoLabel.Text = "All videos downloaded!";
