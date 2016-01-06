@@ -38,7 +38,6 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.chkIncrement = new System.Windows.Forms.CheckBox();
             this.lblSelected = new System.Windows.Forms.Label();
-            this.lblMsg = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.btnSettings = new System.Windows.Forms.Button();
@@ -129,15 +128,6 @@
             this.lblSelected.TabIndex = 10;
             this.lblSelected.Text = "0 items queued";
             // 
-            // lblMsg
-            // 
-            this.lblMsg.AutoSize = true;
-            this.lblMsg.Location = new System.Drawing.Point(137, 99);
-            this.lblMsg.Name = "lblMsg";
-            this.lblMsg.Size = new System.Drawing.Size(271, 13);
-            this.lblMsg.TabIndex = 12;
-            this.lblMsg.Text = "After clicking download, please see the console window";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -216,7 +206,6 @@
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblMsg);
             this.Controls.Add(this.lblSelected);
             this.Controls.Add(this.chkIncrement);
             this.Controls.Add(this.btnBrowse);
@@ -250,7 +239,6 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.CheckBox chkIncrement;
         private System.Windows.Forms.Label lblSelected;
-        private System.Windows.Forms.Label lblMsg;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnSettings;
