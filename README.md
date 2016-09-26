@@ -1,4 +1,7 @@
 # YoutubePlaylistDownloader
+
+###This project is currently not functioning correctly due to external library problems. A [newer, improved version is being developed here] (https://github.com/SY6Dave/YouTubeAudioExtractormatic).
+
 ##Overview
 A desktop application to download YouTube videos as mp3s.
 
